@@ -14,6 +14,7 @@ migrate:
 	uv run alembic upgrade head
 migration:
 	uv run alembic revision --autogenerate -m "$(msg)"
+	uv run ruff format alembic/versions/
 downgrade:
 	uv run alembic downgrade -1
 # Code quality
