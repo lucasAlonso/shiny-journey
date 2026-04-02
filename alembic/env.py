@@ -1,6 +1,9 @@
 import asyncio
 from logging.config import fileConfig
 
+# import to include in models
+from app.models.item import Item  # noqa: F401
+
 from alembic import context
 from app.core.config import settings
 from app.models.base import Base
