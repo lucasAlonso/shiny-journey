@@ -5,4 +5,4 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev
 COPY . .
 RUN chmod +x entrypoint.sh
-CMD ["./entrypoint.sh"]
+CMD ["bash", "./entrypoint.sh"]
