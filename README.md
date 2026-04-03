@@ -13,24 +13,34 @@ Prerequisites: [uv](https://docs.astral.sh/uv/), Docker, Python 3.12+
    cd p3
    cp .env.example .env
    make setup
+   ```
+
 2. Start developing:
-      make dev        # local dev server with auto-reload
+
+   ```bash
+   make dev        # local dev server with auto-reload
    make up         # or run in Docker
+   ```
 
-3. Open <http://localhost:8000/docs>
-Common Commands
-Command
-make dev
-make up
-make down
-make migration msg="description"
-make migrate
-make test
-make lint
-make format
-make reset
+3. Open http://localhost:8000/docs
 
-Project Structure
+## Common Commands
+
+| Command | Description |
+|---------|-------------|
+| `make dev` | Start local dev server |
+| `make up` | Start Docker services |
+| `make down` | Stop Docker services |
+| `make migration msg="description"` | Generate a new migration |
+| `make migrate` | Apply pending migrations |
+| `make test` | Run tests |
+| `make lint` | Check code quality |
+| `make format` | Auto-fix code style |
+| `make reset` | Reset databases from scratch |
+
+## Project Structure
+
+```
 app/
 ├── core/         # config, database, dependencies
 ├── models/       # SQLAlchemy ORM models
@@ -39,6 +49,8 @@ app/
 └── services/     # Business logic
 tests/            # pytest tests
 alembic/          # Database migrations
+```
 
-Deployment
-Push to main → GitHub Actions runs lint + tests → Render auto-deploys.
+## Deployment
+
+Push to `main` → GitHub Actions runs lint + tests → Render auto-deploys.
