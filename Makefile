@@ -1,4 +1,4 @@
-.PHONY: setup dev build up down migrate migration downgrade test lint format reset
+.PHONY: setup dev build up down migrate migration downgrade test lint format reset db-up db-down
 setup:
 	docker compose up -d
 	@sleep 3
@@ -6,7 +6,16 @@ setup:
 	docker compose exec db psql -U postgres -c "CREATE DATABASE test;" 2>/dev/null || true
 	uv run alembic upgrade head
 	@echo "Setup complete. Run 'make dev' or 'make up' to start."
-dev:
+
+db-up:
+	docker compose up -d db
+	@sleep 2
+	@docker compose exec db pg_isready -U postgres > /dev/null 2>&1 || (sleep 3 && docker compose exec db pg_isready -U postgres > /dev/null 2>&1)
+
+db-down:
+	docker compose stop db
+
+dev: db-up
 	uv run fastapi dev app/main.py
 build:
 	docker compose build
@@ -22,14 +31,14 @@ reset:
 	docker compose exec db psql -U postgres -c "CREATE DATABASE test;" 2>/dev/null || true
 	uv run alembic upgrade head
 	@echo "Reset complete."
-migrate:
+migrate: db-up
 	uv run alembic upgrade head
-migration:
+migration: db-up
 	uv run alembic revision --autogenerate -m "$(msg)"
 	uv run ruff format alembic/versions/
 downgrade:
 	uv run alembic downgrade -1
-test:
+test: db-up
 	uv run pytest -v
 lint:
 	uv run ruff check .

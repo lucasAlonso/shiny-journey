@@ -1,11 +1,12 @@
 from fastapi import APIRouter
 from app.core.dependencies import get_db
+from app.schemas.task import ScheduleRequest, ScheduleResponse
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
 @router.post("/")
-async def schedule_tasks():
+async def schedule_tasks(data: ScheduleRequest):
     return {"scheduled": [], "buffered": [], "total_profit": 0.0}
 
 
