@@ -25,26 +25,17 @@ async def schedule_tasks(data: ScheduleRequest, db: AsyncSession = Depends(get_d
     result = await db.execute(select(Task))
     all_tasks = list(result.scalars().all())
 
-    chosen, remaining = schedule([t.to_dict() for t in all_tasks])
-
-    lookup = {}
-    for t in all_tasks:
-        key = (t.name, tuple(t.resources), t.profit)
-        lookup[key] = t
+    chosen_indices, remaining_indices = schedule([t.to_dict() for t in all_tasks])
 
     scheduled_tasks = []
-    for t_dict in chosen:
-        key = (t_dict["name"], tuple(t_dict["resources"]), t_dict["profit"])
-        db_task = lookup[key]
-        db_task.status = "scheduled"
-        scheduled_tasks.append(db_task)
+    for i in chosen_indices:
+        all_tasks[i].status = "scheduled"
+        scheduled_tasks.append(all_tasks[i])
 
     buffered_tasks = []
-    for t_dict in remaining:
-        key = (t_dict["name"], tuple(t_dict["resources"]), t_dict["profit"])
-        db_task = lookup[key]
-        db_task.status = "buffered"
-        buffered_tasks.append(db_task)
+    for i in remaining_indices:
+        all_tasks[i].status = "buffered"
+        buffered_tasks.append(all_tasks[i])
 
     await db.commit()
 

@@ -1,6 +1,6 @@
 def branch_and_bound(tasks: list[dict]) -> list[int]:
     n = len(tasks)
-    best_profit = 0
+    best_profit = -1
     best_indexs = []
 
     def dfs(idx, chosen, used_resources, profit):
@@ -46,15 +46,15 @@ def greedy_as_smeagol(tasks: list[dict]) -> list[int]:
     return chosen
 
 
-def schedule(tasks: list[dict]) -> tuple[list[dict], list[dict]]:
+def schedule(tasks: list[dict]) -> tuple[list[int], list[int]]:
     if not tasks:
         return [], []
 
     if len(tasks) <= 20:
-        indexs = branch_and_bound(tasks)
+        chosen_indices = branch_and_bound(tasks)
     else:
-        indexs = greedy_as_smeagol(tasks)
+        chosen_indices = greedy_as_smeagol(tasks)
 
-    chosen = [tasks[i] for i in indexs]
-    remaining = [t for t in tasks if t not in chosen]
-    return chosen, remaining
+    all_indices = set(range(len(tasks)))
+    remaining_indices = list(all_indices - set(chosen_indices))
+    return chosen_indices, remaining_indices
