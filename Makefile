@@ -1,5 +1,10 @@
-.PHONY: setup dev build up down migrate migration downgrade test lint format reset db-up db-down
-setup:
+.PHONY: setup dev build up down migrate migration downgrade test lint format reset db-up db-down install
+install:
+	uv sync
+	uv run pre-commit install
+	@echo "Dependencies installed and pre-commit hook activated."
+
+setup: install
 	docker compose up -d
 	@sleep 3
 	docker compose exec db psql -U postgres -c "CREATE DATABASE app;" 2>/dev/null || true
