@@ -1,18 +1,4 @@
-def build_conflicts(tasks):
-    conflicts = {}
-    for i in range(len(tasks)):
-        conflicts[i] = set()
-
-    for i in range(len(tasks)):
-        for j in range(len(tasks)):
-            if set(tasks[i]["resources"]) & set(tasks[j]["resources"]):
-                conflicts[i].add(j)
-                conflicts[j].add(j)
-
-    return conflicts
-
-
-def branch_and_bound(tasks: list[dict], conflicts: dict[int, set[int]]) -> list[int]:
+def branch_and_bound(tasks: list[dict]) -> list[int]:
     n = len(tasks)
     best_profit = 0
     best_indexs = []
@@ -26,9 +12,9 @@ def branch_and_bound(tasks: list[dict], conflicts: dict[int, set[int]]) -> list[
                 best_indexs = list(chosen)
             return
 
-        remaing_profit = sum(tasks[idx]["resources"])
+        remaing_profit = sum(tasks[i]["profit"] for i in range(idx, n))
 
-        if profit + remaing_profit >= best_profit:
+        if profit + remaing_profit <= best_profit:
             return  # prune
 
         task_resources = set(tasks[idx]["resources"])
@@ -38,7 +24,7 @@ def branch_and_bound(tasks: list[dict], conflicts: dict[int, set[int]]) -> list[
                 idx + 1,
                 chosen,
                 used_resources | task_resources,
-                profit + tasks[idx][profit],
+                profit + tasks[idx]["profit"],
             )
             chosen.pop()
 
@@ -65,8 +51,7 @@ def schedule(tasks: list[dict]) -> tuple[list[dict], list[dict]]:
         return [], []
 
     if len(tasks) <= 20:
-        conflicts = build_conflicts(tasks)
-        indexs = branch_and_bound(tasks, conflicts)
+        indexs = branch_and_bound(tasks)
     else:
         indexs = greedy_as_smeagol(tasks)
 

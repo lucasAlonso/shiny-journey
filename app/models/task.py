@@ -14,3 +14,6 @@ class Task(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(
         sa.DateTime, server_default=sa.func.now()
     )
+
+    def to_dict(self) -> dict:
+        return {"name": self.name, "resources": self.resources, "profit": self.profit}
